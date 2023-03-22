@@ -4,6 +4,8 @@ import 'simplelightbox/dist/simple-lightbox.min.css';
 const API_KEY = '34585976-51a68d3a5f9444fd8119e93c8';
 const formSearchEl = document.querySelector('#search-form');
 const gallaryBlock = document.querySelector('div.gallery');
+const galleryLightBox = new SimpleLightbox('.gallery a');
+
 axios.defaults.baseURL = 'https://pixabay.com/api/';
 console.log(formSearchEl);
 formSearchEl.addEventListener('submit', searchPhoto);
@@ -27,8 +29,8 @@ function searchPhoto(evt) {
         createPhotoCard(res.data.hits)
       )
     )
-    .finally(() => {
-      return $('.gallery a').simpleLightbox();
+    .then(() => {
+      galleryLightBox.refresh();
     });
 }
 
