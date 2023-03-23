@@ -22,16 +22,16 @@ body {
       width: 100%;
       justify-content: center;
       background-color: cornflowerblue;
-      padding-top: 20px;
-      padding-bottom: 20px;
+      padding: 20px;
 
       .search-form {
         position: relative;
+        flex-basis: 600px;
 
         input {
           // font-family: 'Roboto';
           // border-radius: 2px;
-          width: 500px;
+          width: 100%;
           min-width: 240px;
           padding: 10px;
 
