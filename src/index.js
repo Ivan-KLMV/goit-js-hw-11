@@ -19,6 +19,7 @@ formSearchEl.addEventListener('submit', searchPhoto);
 loadMoreBtn.addEventListener('click', loadMorePhoto);
 
 function searchPhoto(evt) {
+  hideLoadMoreBtn();
   resetPage();
   evt.preventDefault();
   inputValue = evt.target.elements.searchQuery.value.trim();
@@ -32,7 +33,7 @@ function searchPhoto(evt) {
       if (res.data.hits.length === 0) {
         return notifyFailure();
       }
-      loadMoreBtn.removeAttribute('hidden');
+      showLoadMoreBtn();
       increasePage();
       notifyInfo(res.data.totalHits);
       creaetCard(res.data.hits);
@@ -46,11 +47,10 @@ function searchPhoto(evt) {
 function loadMorePhoto() {
   return getResponse(API_KEY, inputValue, page)
     .then(res => {
-      // console.log(res);
-      // if (res.data.status === 400) {
-      //   console.log(res.data.hits.length < perPage);
-      //   return;
-      // }
+      if (res.data.hits.length < perPage) {
+        hideLoadMoreBtn();
+        notitfyEndOfList();
+      }
       increasePage();
       creaetCard(res.data.hits);
     })
@@ -58,8 +58,6 @@ function loadMorePhoto() {
       galleryLightBox.refresh();
     })
     .catch(error => {
-      loadMoreBtn.setAttribute('hidden', true);
-      galleryLightBox.refresh();
       return notitfyEndOfList();
     });
 }
@@ -98,4 +96,12 @@ function getResponse(key, input, page) {
   return axios.get(
     `?key=${key}&q=${input}s&image_type=photo&orientation=horizontal&safesearch=true&page=${page}&per_page=${perPage}`
   );
+}
+
+function showLoadMoreBtn() {
+  loadMoreBtn.removeAttribute('hidden');
+}
+
+function hideLoadMoreBtn() {
+  loadMoreBtn.setAttribute('hidden', true);
 }
