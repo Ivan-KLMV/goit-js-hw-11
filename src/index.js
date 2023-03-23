@@ -22,8 +22,12 @@ function searchPhoto(evt) {
   hideLoadMoreBtn();
   resetPage();
   evt.preventDefault();
-  inputValue = evt.target.elements.searchQuery.value.trim();
+  inputValue = evt.target.elements.searchQuery.value
+    .trim()
+    .split(' ')
+    .join('+');
 
+  console.log(inputValue);
   if (!inputValue) {
     return;
   }
