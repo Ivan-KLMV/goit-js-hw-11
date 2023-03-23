@@ -14,9 +14,10 @@ let page = 1;
 axios.defaults.baseURL = 'https://pixabay.com/api/';
 
 formSearchEl.addEventListener('submit', searchPhoto);
-loadMoreBtn.addEventListener('click', searchPhoto);
+loadMoreBtn.addEventListener('click', adMorePhoto);
 
 function searchPhoto(evt) {
+  resetPage();
   evt.preventDefault();
   const inputValue = evt.target.elements.searchQuery.value.trim();
 
@@ -24,7 +25,7 @@ function searchPhoto(evt) {
     return;
   }
   clearTmplt();
-  return getReqest(API_KEY, inputValue, page);
+  return getResponse(API_KEY, inputValue, page);
 }
 
 function increasePage() {
@@ -52,7 +53,7 @@ function creaetCard(hits) {
 function clearTmplt() {
   return (gallaryBlock.innerHTML = '');
 }
-function getReqest(key, input, page) {
+function getResponse(key, input, page) {
   return axios
     .get(
       `?key=${key}&q=${input}s&image_type=photo&orientation=horizontal&safesearch=true&page=${page}&per_page=40`
