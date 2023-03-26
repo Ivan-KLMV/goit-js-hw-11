@@ -16,7 +16,7 @@ let inputValue = '';
 axios.defaults.baseURL = 'https://pixabay.com/api/';
 
 formSearchEl.addEventListener('submit', searchPhoto);
-loadMoreBtn.addEventListener('click', loadMorePhoto);
+// loadMoreBtn.addEventListener('click', loadMorePhoto);
 
 function searchPhoto(evt) {
   hideLoadMoreBtn();
@@ -27,7 +27,6 @@ function searchPhoto(evt) {
     .split(' ')
     .join('+');
 
-  console.log(inputValue);
   if (!inputValue) {
     return;
   }
@@ -37,13 +36,11 @@ function searchPhoto(evt) {
       if (res.data.hits.length === 0) {
         return notifyFailure();
       }
-      showLoadMoreBtn();
+      // showLoadMoreBtn();
       increasePage();
       notifyInfo(res.data.totalHits);
       creaetCard(res.data.hits);
-    })
-    .then(() => {
-      galleryLightBox.refresh();
+      infiniteScroll();
     })
     .catch(console.error);
 }
@@ -51,19 +48,44 @@ function searchPhoto(evt) {
 function loadMorePhoto() {
   return getResponse(API_KEY, inputValue, page)
     .then(res => {
-      if (res.data.hits.length < perPage) {
-        hideLoadMoreBtn();
+      if (res.data.hits.length === 0) {
+        // hideLoadMoreBtn();
         notitfyEndOfList();
+        return;
       }
       increasePage();
       creaetCard(res.data.hits);
+      smoothScroll();
+      infiniteScroll();
     })
-    .then(() => {
-      galleryLightBox.refresh();
-    })
+    .then()
     .catch(error => {
-      return notitfyEndOfList();
+      notitfyEndOfList();
     });
+}
+
+function infiniteScroll() {
+  const GalleryObserver = new IntersectionObserver(([entrie], observer) => {
+    if (entrie.isIntersecting) {
+      observer.unobserve(entrie.target);
+      loadMorePhoto();
+    }
+  }, {});
+
+  const lastPhoto = gallaryBlock.lastElementChild;
+  if (lastPhoto) {
+    GalleryObserver.observe(lastPhoto);
+  }
+}
+
+function smoothScroll() {
+  const { height: cardHeight } =
+    gallaryBlock.firstElementChild.getBoundingClientRect();
+
+  window.scrollBy({
+    top: cardHeight * 1.5,
+    behavior: 'smooth',
+  });
 }
 
 function increasePage() {
@@ -90,6 +112,7 @@ function notifyFailure() {
 
 function creaetCard(hits) {
   gallaryBlock.insertAdjacentHTML('beforeend', createCardTmplt(hits));
+  galleryLightBox.refresh();
 }
 
 function clearTmplt() {
