@@ -18,8 +18,8 @@ axios.defaults.baseURL = 'https://pixabay.com/api/';
 formSearchEl.addEventListener('submit', searchPhoto);
 // loadMoreBtn.addEventListener('click', loadMorePhoto);
 
-function searchPhoto(evt) {
-  hideLoadMoreBtn();
+async function searchPhoto(evt) {
+  // hideLoadMoreBtn();
   resetPage();
   evt.preventDefault();
   inputValue = evt.target.elements.searchQuery.value
@@ -31,37 +31,44 @@ function searchPhoto(evt) {
     return;
   }
   clearTmplt();
-  return getResponse(API_KEY, inputValue, page)
-    .then(res => {
+  const response = await getResponse(API_KEY, inputValue, page);
+  const photoLoader = async res => {
+    try {
       if (res.data.hits.length === 0) {
         return notifyFailure();
       }
       // showLoadMoreBtn();
       increasePage();
       notifyInfo(res.data.totalHits);
-      creaetCard(res.data.hits);
+      createCard(res.data.hits);
       infiniteScroll();
-    })
-    .catch(console.error);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  return await photoLoader(response);
 }
 
-function loadMorePhoto() {
-  return getResponse(API_KEY, inputValue, page)
-    .then(res => {
+async function loadMorePhoto() {
+  const response = await getResponse(API_KEY, inputValue, page);
+  const photoLoader = async res => {
+    try {
       if (res.data.hits.length === 0) {
         // hideLoadMoreBtn();
         notitfyEndOfList();
         return;
       }
       increasePage();
-      creaetCard(res.data.hits);
+      createCard(res.data.hits);
       smoothScroll();
       infiniteScroll();
-    })
-    .then()
-    .catch(error => {
+    } catch {
       notitfyEndOfList();
-    });
+    }
+  };
+
+  return await photoLoader(response);
 }
 
 function infiniteScroll() {
@@ -83,7 +90,7 @@ function smoothScroll() {
     gallaryBlock.firstElementChild.getBoundingClientRect();
 
   window.scrollBy({
-    top: cardHeight * 1.5,
+    top: cardHeight * 2,
     behavior: 'smooth',
   });
 }
@@ -110,7 +117,7 @@ function notifyFailure() {
   );
 }
 
-function creaetCard(hits) {
+function createCard(hits) {
   gallaryBlock.insertAdjacentHTML('beforeend', createCardTmplt(hits));
   galleryLightBox.refresh();
 }
@@ -125,10 +132,10 @@ function getResponse(key, input, page) {
   );
 }
 
-function showLoadMoreBtn() {
-  loadMoreBtn.removeAttribute('hidden');
-}
+// function showLoadMoreBtn() {
+//   loadMoreBtn.removeAttribute('hidden');
+// }
 
-function hideLoadMoreBtn() {
-  loadMoreBtn.setAttribute('hidden', true);
-}
+// function hideLoadMoreBtn() {
+//   loadMoreBtn.setAttribute('hidden', true);
+// }
