@@ -72,28 +72,13 @@ async function loadMorePhoto() {
 }
 
 function infiniteScroll() {
-  // const options = {
-  //   root: gallaryBlock,
-  //   rootMargin: '0px',
-  //   threshold: 0.0,
-  // };
-  // const callback = function ([entrie], observer) {
-  //   console.log(entrie);
-  //   console.log(observer);
-  //   if (entrie.isIntersecting) {
-  //     console.log('1');
-  //     // observer.unobserve(entrie.target);
-  //     // loadMorePhoto();
-  //   }
-  //   /* Content excerpted, show below */
-  // };
-  // const observer = new IntersectionObserver(callback, options);
-  // observer.observe(gallaryBlock.lastElementChild);
-
+  const lastPhoto = gallaryBlock.lastElementChild;
+  const { height: lastPhotoHeight } = lastPhoto.getBoundingClientRect();
   const GalleryObserver = new IntersectionObserver(
     ([entrie], observer) => {
-      // console.log(entrie);
-      // console.log(observer);
+      console.log(entrie);
+      console.log(observer);
+      console.log(lastPhotoHeight);
 
       if (entrie.isIntersecting) {
         loadMorePhoto();
@@ -101,15 +86,14 @@ function infiniteScroll() {
         observer.unobserve(entrie.target);
       }
     },
-    { rootMargin: ' 0px 0px 250px 0px', threshold: 0.1 }
+    { rootMargin: `0px 0px ${lastPhotoHeight * 2}px 0px`, threshold: 0.1 }
   );
 
-  GalleryObserver.observe(gallaryBlock.lastElementChild);
+  // GalleryObserver.observe(gallaryBlock.lastElementChild);
 
-  // const lastPhoto = gallaryBlock.lastElementChild;
-  // if (lastPhoto) {
-  //   GalleryObserver.observe(lastPhoto);
-  // }
+  if (lastPhoto) {
+    GalleryObserver.observe(lastPhoto);
+  }
 }
 
 function smoothScroll() {
