@@ -1,6 +1,6 @@
 import axios from 'axios';
 import SimpleLightbox from 'simplelightbox';
-import { Notify } from 'notiflix';
+import { Loading, Notify } from 'notiflix';
 import { createCardTmplt } from './js/template';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 
@@ -61,7 +61,7 @@ async function loadMorePhoto() {
       }
       increasePage();
       createCard(res.data.hits);
-      smoothScroll();
+      // smoothScroll();
       infiniteScroll();
     } catch {
       notitfyEndOfList();
@@ -72,22 +72,50 @@ async function loadMorePhoto() {
 }
 
 function infiniteScroll() {
-  const GalleryObserver = new IntersectionObserver(([entrie], observer) => {
-    if (entrie.isIntersecting) {
-      observer.unobserve(entrie.target);
-      loadMorePhoto();
-    }
-  }, {});
+  // const options = {
+  //   root: gallaryBlock,
+  //   rootMargin: '0px',
+  //   threshold: 0.0,
+  // };
+  // const callback = function ([entrie], observer) {
+  //   console.log(entrie);
+  //   console.log(observer);
+  //   if (entrie.isIntersecting) {
+  //     console.log('1');
+  //     // observer.unobserve(entrie.target);
+  //     // loadMorePhoto();
+  //   }
+  //   /* Content excerpted, show below */
+  // };
+  // const observer = new IntersectionObserver(callback, options);
+  // observer.observe(gallaryBlock.lastElementChild);
 
-  const lastPhoto = gallaryBlock.lastElementChild;
-  if (lastPhoto) {
-    GalleryObserver.observe(lastPhoto);
-  }
+  const GalleryObserver = new IntersectionObserver(
+    ([entrie], observer) => {
+      // console.log(entrie);
+      // console.log(observer);
+
+      if (entrie.isIntersecting) {
+        loadMorePhoto();
+        // console.log('isIntersecting OK');
+        observer.unobserve(entrie.target);
+      }
+    },
+    { rootMargin: ' 0px 0px 250px 0px', threshold: 0.1 }
+  );
+
+  GalleryObserver.observe(gallaryBlock.lastElementChild);
+
+  // const lastPhoto = gallaryBlock.lastElementChild;
+  // if (lastPhoto) {
+  //   GalleryObserver.observe(lastPhoto);
+  // }
 }
 
 function smoothScroll() {
   const { height: cardHeight } =
     gallaryBlock.firstElementChild.getBoundingClientRect();
+  // console.log(gallaryBlock.firstElementChild.getBoundingClientRect());
 
   window.scrollBy({
     top: cardHeight * 2,
