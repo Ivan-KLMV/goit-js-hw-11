@@ -76,9 +76,9 @@ function infiniteScroll() {
   const { height: lastPhotoHeight } = lastPhoto.getBoundingClientRect();
   const GalleryObserver = new IntersectionObserver(
     ([entrie], observer) => {
-      console.log(entrie);
-      console.log(observer);
-      console.log(lastPhotoHeight);
+      // console.log(entrie);
+      // console.log(observer);
+      // console.log(lastPhotoHeight);
 
       if (entrie.isIntersecting) {
         loadMorePhoto();
